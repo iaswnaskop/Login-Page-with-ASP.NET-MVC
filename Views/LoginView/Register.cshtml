@@ -1,0 +1,79 @@
+@model LoginPage.Models.UserRegister
+
+@{
+    ViewData["Title"] = "Register";
+}
+<h1>Register</h1>
+
+<h4>User</h4>
+
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form id="registerForm">
+            <div class="form-group">
+                <label for="email">Email</label>
+                <input type="email" class="form-control" id="email" name="email" required>
+            </div>
+            <div class="form-group">
+                <label for="username">Username</label>
+                <input type="text" class="form-control" id="username" name="username" required>
+            </div>
+            <div class="form-group">
+                <label for="password">Password</label>
+                <input type="password" class="form-control" id="password" name="password" required>
+            </div>
+            <div class="form-group">
+                <label for="role">Chose Role</label>
+                @foreach (var role in Model.AvailableRoles)
+                {
+                    <div class="form-check">
+                        <input type="radio" class="form-check-input" 
+                               id="role_@role.Id" 
+                               name="role" 
+                               value="@role.Id">
+                        <label class="form-check-label" for="role_@role.Id">@role.Name</label>
+                    </div>
+
+                }
+            </div>
+            <button type="submit" class="btn btn-primary">Register</button>
+        </form>
+    </div>
+    
+</div>
+
+@section Scripts {
+    <script>
+        document.getElementById('registerForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const userData = {
+                email: document.getElementById('email').value,
+                name: document.getElementById('username').value,
+                password: document.getElementById('password').value,
+                roleid: document.querySelector('input[name="role"]:checked').value
+            };
+
+            try {
+                const response = await fetch('/api/register', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(userData)
+                });
+
+                if (response.ok) {
+                    alert('Registration successful!');
+                    window.location.href = window.location.origin + '/';
+                } else {
+                    const error = await response.text();
+                    alert('Registration failed: ' + error);
+                }
+            } catch (error) {
+                alert('Error: ' + error);
+            }
+        });
+    </script>
+}

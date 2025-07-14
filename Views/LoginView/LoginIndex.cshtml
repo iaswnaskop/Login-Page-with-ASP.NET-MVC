@@ -1,0 +1,80 @@
+@model LoginPage.Entities.UserViewModel
+
+@{
+ViewData["Title"] = "Welcome";
+}
+
+<div class="container mt-4">
+    <div class="card">
+        <div class="card-header">
+            <h2>Welcome, @Model.CurrentUser.Name!</h2>
+            
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="user-info">
+                        <h4>Your Profile</h4>
+                        <hr />
+                        <dl class="row">
+                            <dt class="col-sm-3">Name:</dt>
+                            <dd class="col-sm-9">@Model.CurrentUser.Name</dd>
+
+                            <dt class="col-sm-3">Email:</dt>
+                            <dd class="col-sm-9">@Model.CurrentUser.Email</dd>
+                            <dt class="col-sm-3">Role:</dt>
+                            <dd class="col-sm-9">@Model.CurrentUser.Role?.Name</dd>
+                        </dl>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+@if (Model.CurrentUser.Role?.Id ==1)//admin
+{
+    <div class="card-body">
+        <div class="row">
+            <div class="col-md-6">
+                <div class="user-info">
+                    <h4>Other Users</h4>
+                    <hr />
+                    <table class="table">
+                        <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Email</th>
+                            <th>Role</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        @foreach (var user in Model.AllUsers)
+                        {
+                            @if(user.Email != Model.CurrentUser.Email)
+                            {
+                                <tr>
+                                    <td>@user.Name</td>
+                                    <td>@user.Email</td>
+                                    <td>@(user.Role?.Name ?? "No Role")</td>
+                                </tr>
+                            }
+                            
+                        }
+                        </tbody>
+                    </table>
+
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+
+@section Scripts {
+<script>
+    if (!document.cookie.includes('token=') && !localStorage.getItem('token')) {
+        window.location.href = '/LoginViewController/Login';
+    }
+
+</script>
+}
