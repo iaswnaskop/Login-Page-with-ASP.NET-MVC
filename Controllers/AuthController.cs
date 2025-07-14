@@ -4,6 +4,7 @@ using System.Text;
 using LoginPage.Entities;
 using LoginPage.Models;
 using LoginPage.Services.Login;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
@@ -37,11 +38,13 @@ namespace LoginPage.Controllers
         {
             return View();
         }
-        public async Task<IActionResult> LoginIndex([FromQuery] string token)
+        [Authorize]
+        public async Task<IActionResult> LoginIndex(string token)
         {
+            
             if (string.IsNullOrEmpty(token))
             {
-                
+                // Μετά τσέκαρε το Authorization header
                 var authorization = Request.Headers["Authorization"].FirstOrDefault();
                 if (!string.IsNullOrEmpty(authorization) && authorization.StartsWith("Bearer "))
                 {
@@ -61,13 +64,13 @@ namespace LoginPage.Controllers
             if (user == null)
                 return RedirectToAction("Login");
             
-            
+            // Αποθήκευσε το token σε cookie αν δεν υπάρχει
             if (!Request.Cookies.ContainsKey("token"))
             {
                 Response.Cookies.Append("token", token, new CookieOptions
                 {
                     HttpOnly = true,
-                    Secure = true,
+                    Secure = false, 
                     SameSite = SameSiteMode.Strict
                 });
             }
@@ -79,8 +82,10 @@ namespace LoginPage.Controllers
                 viewModel.AllUsers = await _loginService.GetAllUsers();
             }
             
-            return View(viewModel);
+            return View(viewModel); 
         }
+
+       
 
     }
     [ApiController]

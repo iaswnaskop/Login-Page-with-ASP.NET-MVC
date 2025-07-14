@@ -49,7 +49,7 @@
                     document.cookie = `token=${data.token}; path=/`;
 
                     // Redirect with token in URL
-                    window.location.href = `/LoginView/LoginIndex?token=${data.token}`;
+                    window.location.href = `/LoginView/LoginIndex`;
                 } 
                 else {
                     const error = await response.text();

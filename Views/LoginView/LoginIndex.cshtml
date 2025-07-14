@@ -8,7 +8,7 @@ ViewData["Title"] = "Welcome";
     <div class="card">
         <div class="card-header">
             <h2>Welcome, @Model.CurrentUser.Name!</h2>
-            
+            <button id="logoutBtn" class="btn btn-danger">Logout</button>
         </div>
         <div class="card-body">
             <div class="row">
@@ -72,9 +72,44 @@ ViewData["Title"] = "Welcome";
 
 @section Scripts {
 <script>
-    if (!document.cookie.includes('token=') && !localStorage.getItem('token')) {
-        window.location.href = '/LoginViewController/Login';
+   
+    const token = localStorage.getItem('token');
+    if (!token && !document.cookie.includes('token=')) {
+        window.location.href = '/LoginView/Login';
     }
+    
+
+    const userDetails = {
+        name: '@Model.CurrentUser.Name',
+        email: '@Model.CurrentUser.Email',
+        role: '@Model.CurrentUser.Role?.Name',
+        roleId: @Model.CurrentUser.Role?.Id
+    };
+    localStorage.setItem('userDetails', JSON.stringify(userDetails));
+    console.log('User details stored:', userDetails);
+    
+    document.getElementById('logoutBtn').addEventListener('click', function() {
+        logout();
+    });
+
+    // logout function
+    function logout() {
+        // Clear localStorage
+        localStorage.removeItem('token');
+        localStorage.removeItem('userDetails');
+        localStorage.clear();
+
+        // Clear sessionStorage
+        sessionStorage.clear();
+
+        // Clear cookies
+        document.cookie = 'token=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
+        document.cookie = 'auth=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
+
+        // Redirect to login
+        window.location.href = window.location.origin + '/';
+    }
+
 
 </script>
 }

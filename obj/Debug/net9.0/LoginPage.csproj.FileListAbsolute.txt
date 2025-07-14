@@ -201,3 +201,4 @@ C:\Users\kopanosi\RiderProjects\LoginPage\LoginPage\bin\Debug\net9.0\Microsoft.I
 C:\Users\kopanosi\RiderProjects\LoginPage\LoginPage\bin\Debug\net9.0\Microsoft.IdentityModel.Protocols.OpenIdConnect.dll
 C:\Users\kopanosi\RiderProjects\LoginPage\LoginPage\bin\Debug\net9.0\Microsoft.IdentityModel.Tokens.dll
 C:\Users\kopanosi\RiderProjects\LoginPage\LoginPage\bin\Debug\net9.0\System.IdentityModel.Tokens.Jwt.dll
+C:\Users\kopanosi\RiderProjects\LoginPage\LoginPage\obj\Debug\net9.0\LoginPage.sourcelink.json

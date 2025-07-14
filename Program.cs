@@ -1,6 +1,9 @@
+using System.Text;
 using LoginPage.Context;
 using LoginPage.Services.Login;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -9,7 +12,28 @@ builder.Services.AddControllersWithViews();
 builder.Services.AddDbContext<DataContext>(options =>
     options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection"))
 );
+var jwtKey = builder.Configuration["AppSettings:Token"];
+var jwtIssuer = builder.Configuration["AppSettings:Issuer"];
+var jwtAudience = builder.Configuration["AppSettings:Audience"];
 
+builder.Services.AddAuthentication(options =>
+    {
+        options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+        options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+    })
+    .AddJwtBearer(options =>
+    {
+        options.TokenValidationParameters = new TokenValidationParameters
+        {
+            ValidateIssuer = true,
+            ValidateAudience = true,
+            ValidateLifetime = true,
+            ValidateIssuerSigningKey = true,
+            ValidIssuer = jwtIssuer,
+            ValidAudience = jwtAudience,
+            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtKey!))
+        };
+    });
 builder.Services.AddScoped<ILoginService, LoginService>();
 
 // builder.WebHost.ConfigureKestrel(options =>
@@ -64,7 +88,7 @@ app.Use(async (context, next) =>
     
     await next();
 });
-
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapStaticAssets();
